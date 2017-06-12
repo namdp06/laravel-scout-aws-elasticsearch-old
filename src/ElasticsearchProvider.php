@@ -7,7 +7,7 @@ use Aws\Credentials\Credentials;
 use Aws\ElasticsearchService\ElasticsearchPhpHandler;
 use Laravel\Scout\EngineManager;
 use Illuminate\Support\ServiceProvider;
-use Elasticsearch\ClientBuilder;
+use Elasticsearch\ClientBuilder as ElasticBuilder;
 
 class ElasticsearchProvider extends ServiceProvider
 {
@@ -30,7 +30,7 @@ class ElasticsearchProvider extends ServiceProvider
                 new Credentials(getenv('AWSAccessKeyId'), getenv('AWSSecretKey'))
             );
             $handler = new ElasticsearchPhpHandler('ap-southeast-2', $provider);
-            return new ElasticsearchEngine(ClientBuilder::create()
+            return new ElasticsearchEngine(ElasticBuilder::create()
                 ->setHandler($handler)
                 ->setHosts(config('scout.elasticsearch.hosts'))
                 ->build(),
