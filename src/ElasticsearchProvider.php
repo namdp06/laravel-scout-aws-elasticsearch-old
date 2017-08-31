@@ -16,7 +16,7 @@ class ElasticsearchProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (getenv('AWS')) {
+        if (getenv('ELASTICSERACH_DRIVER') == 'aws') {
             $this->AwsSolution();
         } else {
             $this->localSolution();
@@ -27,9 +27,9 @@ class ElasticsearchProvider extends ServiceProvider
     {
         app(EngineManager::class)->extend('elasticsearch', function($app) {
             $provider = CredentialProvider::fromCredentials(
-                new Credentials(getenv('AWSAccessKeyId'), getenv('AWSSecretKey'))
+                new Credentials(getenv('AWS_KEY'), getenv('AWS_SECRET'))
             );
-            $handler = new ElasticsearchPhpHandler(getenv('AWSRegion'), $provider);
+            $handler = new ElasticsearchPhpHandler(getenv('AWS_REGION'), $provider);
             return new ElasticsearchEngine(ElasticBuilder::create()
                 ->setHandler($handler)
                 ->setHosts(config('scout.elasticsearch.hosts'))

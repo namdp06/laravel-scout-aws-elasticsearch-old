@@ -2,7 +2,7 @@
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
-This package makes is the [Elasticsearch](https://www.elastic.co/products/elasticsearch) driver for Laravel Scout.
+This package makes is the [Elasticsearch](https://www.elastic.co/products/elasticsearch) driver for Laravel Scout with AWS supprot.
 
 ## Contents
 
@@ -16,7 +16,7 @@ This package makes is the [Elasticsearch](https://www.elastic.co/products/elasti
 You can install the package via composer:
 
 ``` bash
-composer require tamayo/laravel-scout-elastic
+composer require dzv3r0/laravel-scout-aws-elastic
 ```
 
 You must add the Scout service provider and the package service provider in your app.php config:
@@ -35,6 +35,20 @@ You must add the Scout service provider and the package service provider in your
 You must have a Elasticsearch server up and running with the index you want to use created
 
 If you need help with this please refer to the [Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
+
+If you want to use AWS Elasticsearh make sure you have setup the credentials
+
+```
+AWS_KEY=
+AWS_SECRET=
+AWS_REGION=
+```
+
+and set 
+
+```
+
+```
 
 After you've published the Laravel Scout package configuration:
 
