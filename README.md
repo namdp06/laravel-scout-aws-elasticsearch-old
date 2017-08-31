@@ -47,7 +47,7 @@ AWS_REGION=
 and set 
 
 ```
-
+ELASTICSERACH_DRIVER=aws
 ```
 
 After you've published the Laravel Scout package configuration:
