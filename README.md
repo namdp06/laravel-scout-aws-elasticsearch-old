@@ -2,7 +2,7 @@
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
-This package makes is the [Elasticsearch](https://www.elastic.co/products/elasticsearch) driver for Laravel Scout with AWS supprot.
+This package makes is the [Elasticsearch](https://www.elastic.co/products/elasticsearch) driver for Laravel Scout with AWS support.
 
 ## Contents
 
