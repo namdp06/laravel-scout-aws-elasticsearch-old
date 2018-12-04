@@ -5,9 +5,9 @@ namespace ScoutEngines\Elasticsearch;
 use Aws\Credentials\CredentialProvider;
 use Aws\Credentials\Credentials;
 use Aws\ElasticsearchService\ElasticsearchPhpHandler;
-use Laravel\Scout\EngineManager;
-use Illuminate\Support\ServiceProvider;
 use Elasticsearch\ClientBuilder as ElasticBuilder;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Scout\EngineManager;
 
 class ElasticsearchProvider extends ServiceProvider
 {
@@ -25,15 +25,15 @@ class ElasticsearchProvider extends ServiceProvider
 
     public function AwsSolution()
     {
-        app(EngineManager::class)->extend('elasticsearch', function($app) {
+        app(EngineManager::class)->extend('elasticsearch', function ($app) {
             $provider = CredentialProvider::fromCredentials(
-                new Credentials(getenv('AWS_KEY'), getenv('AWS_SECRET'))
+                new Credentials(getenv('AWS_ACCESS_KEY'), getenv('AWS_ACCESS_SECRET'))
             );
             $handler = new ElasticsearchPhpHandler(getenv('AWS_REGION'), $provider);
             return new ElasticsearchEngine(ElasticBuilder::create()
-                ->setHandler($handler)
-                ->setHosts(config('scout.elasticsearch.hosts'))
-                ->build(),
+                    ->setHandler($handler)
+                    ->setHosts(config('scout.elasticsearch.hosts'))
+                    ->build(),
                 config('scout.elasticsearch.index')
             );
         });
@@ -41,10 +41,10 @@ class ElasticsearchProvider extends ServiceProvider
 
     public function localSolution()
     {
-        app(EngineManager::class)->extend('elasticsearch', function($app) {
+        app(EngineManager::class)->extend('elasticsearch', function ($app) {
             return new ElasticsearchEngine(ElasticBuilder::create()
-                ->setHosts(config('scout.elasticsearch.hosts'))
-                ->build(),
+                    ->setHosts(config('scout.elasticsearch.hosts'))
+                    ->build(),
                 config('scout.elasticsearch.index')
             );
         });
