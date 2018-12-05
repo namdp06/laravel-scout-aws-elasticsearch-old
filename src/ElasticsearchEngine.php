@@ -37,7 +37,6 @@ class ElasticsearchEngine extends Engine
     public function update($models)
     {
         $params['body'] = [];
-
         $models->each(function ($model) use (&$params) {
             $params['body'][] = [
                 'update' => [
@@ -167,7 +166,7 @@ class ElasticsearchEngine extends Engine
      */
     protected function filters(Builder $builder)
     {
-        return collect($builder->wheres)->map($builder, function ($value, $key) {
+        return collect($builder->wheres)->map(function ($value, $key) {
             return ['match_phrase' => [$key => $value]];
         })->values()->all();
     }
@@ -192,7 +191,7 @@ class ElasticsearchEngine extends Engine
      */
     public function map(Builder $builder, $results, $model)
     {
-        if (count($results['hits']['total']) === 0) {
+        if ($results['hits']['total'] === 0) {
             return Collection::make();
         }
 
@@ -203,7 +202,7 @@ class ElasticsearchEngine extends Engine
             $model->getKeyName(), $keys
         )->get()->keyBy($model->getKeyName());
 
-        return collect($results['hits']['hits'])->map($builder, function ($hit) use ($model, $models) {
+        return collect($results['hits']['hits'])->map(function ($hit) use ($model, $models) {
             return isset($models[$hit['_id']]) ? $models[$hit['_id']] : null;
         })->filter();
     }
