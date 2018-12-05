@@ -5,7 +5,7 @@
     "require": {
         "php": ">=7.1",
         "laravel/scout": ">=6.0",
-        "elasticsearch/elasticsearch": ">=6.0",
+        "elasticsearch/elasticsearch": "~6.0",
         "jsq/amazon-es-php": ">=0.2.3"
     },
      "require-dev": {

@@ -2,11 +2,10 @@
 
 namespace ScoutEngines\Elasticsearch;
 
-use Laravel\Scout\Builder;
-use Laravel\Scout\Engines\Engine;
 use Elasticsearch\Client as Elastic;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as BaseCollection;
+use Laravel\Scout\Builder;
+use Laravel\Scout\Engines\Engine;
 
 class ElasticsearchEngine extends Engine
 {
@@ -26,7 +25,7 @@ class ElasticsearchEngine extends Engine
     public function __construct(Elastic $elastic, $index)
     {
         $this->elastic = $elastic;
-        $this->index = $index;
+        $this->index   = $index;
     }
 
     /**
@@ -39,18 +38,17 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
 
-        $models->each(function($model) use (&$params)
-        {
+        $models->each(function ($model) use (&$params) {
             $params['body'][] = [
                 'update' => [
-                    '_id' => $model->getKey(),
+                    '_id'    => $model->getKey(),
                     '_index' => $this->index,
-                    '_type' => $model->searchableAs(),
-                ]
+                    '_type'  => $model->searchableAs(),
+                ],
             ];
             $params['body'][] = [
-                'doc' => $model->toSearchableArray(),
-                'doc_as_upsert' => true
+                'doc'           => $model->toSearchableArray(),
+                'doc_as_upsert' => true,
             ];
         });
 
@@ -67,14 +65,13 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
 
-        $models->each(function($model) use (&$params)
-        {
+        $models->each(function ($model) use (&$params) {
             $params['body'][] = [
                 'delete' => [
-                    '_id' => $model->getKey(),
+                    '_id'    => $model->getKey(),
                     '_index' => $this->index,
-                    '_type' => $model->searchableAs(),
-                ]
+                    '_type'  => $model->searchableAs(),
+                ],
             ];
         });
 
@@ -91,8 +88,13 @@ class ElasticsearchEngine extends Engine
     {
         return $this->performSearch($builder, array_filter([
             'numericFilters' => $this->filters($builder),
-            'size' => $builder->limit,
+            'size'           => $builder->limit,
         ]));
+    }
+
+    public function flush($model)
+    {
+        return $this->flush($model);
     }
 
     /**
@@ -107,11 +109,11 @@ class ElasticsearchEngine extends Engine
     {
         $result = $this->performSearch($builder, [
             'numericFilters' => $this->filters($builder),
-            'from' => (($page * $perPage) - $perPage),
-            'size' => $perPage,
+            'from'           => (($page * $perPage) - $perPage),
+            'size'           => $perPage,
         ]);
 
-       $result['nbPages'] = $result['hits']['total']/$perPage;
+        $result['nbPages'] = $result['hits']['total'] / $perPage;
 
         return $result;
     }
@@ -127,14 +129,14 @@ class ElasticsearchEngine extends Engine
     {
         $params = [
             'index' => $this->index,
-            'type' => $builder->index ?: $builder->model->searchableAs(),
-            'body' => [
+            'type'  => $builder->index ?: $builder->model->searchableAs(),
+            'body'  => [
                 'query' => [
                     'bool' => [
-                        'must' => [['query_string' => [ 'query' => "*{$builder->query}*"]]]
-                    ]
-                ]
-            ]
+                        'must' => [['query_string' => ['query' => "*{$builder->query}*"]]],
+                    ],
+                ],
+            ],
         ];
 
         if ($sort = $this->sort($builder)) {
@@ -165,7 +167,7 @@ class ElasticsearchEngine extends Engine
      */
     protected function filters(Builder $builder)
     {
-        return collect($builder->wheres)->map(function ($value, $key) {
+        return collect($builder->wheres)->map($builder, function ($value, $key) {
             return ['match_phrase' => [$key => $value]];
         })->values()->all();
     }
@@ -188,20 +190,20 @@ class ElasticsearchEngine extends Engine
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return Collection
      */
-    public function map($results, $model)
+    public function map(Builder $builder, $results, $model)
     {
         if (count($results['hits']['total']) === 0) {
             return Collection::make();
         }
 
         $keys = collect($results['hits']['hits'])
-                        ->pluck('_id')->values()->all();
+            ->pluck('_id')->values()->all();
 
         $models = $model->whereIn(
             $model->getKeyName(), $keys
         )->get()->keyBy($model->getKeyName());
 
-        return collect($results['hits']['hits'])->map(function ($hit) use ($model, $models) {
+        return collect($results['hits']['hits'])->map($builder, function ($hit) use ($model, $models) {
             return isset($models[$hit['_id']]) ? $models[$hit['_id']] : null;
         })->filter();
     }
@@ -229,7 +231,7 @@ class ElasticsearchEngine extends Engine
             return null;
         }
 
-        return collect($builder->orders)->map(function($order) {
+        return collect($builder->orders)->map($builder, function ($order) {
             return [$order['column'] => $order['direction']];
         })->toArray();
     }
